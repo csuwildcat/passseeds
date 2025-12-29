@@ -1,7 +1,7 @@
 {
   "name": "passseeds",
   "version": "0.1.0",
-  "description": "PassSeeds - Passkey-gated cryptographic seed derivation",
+  "description": "PassSeeds - Passkey-based cryptographic seed derivation",
   "type": "module",
   "exports": {
     ".": {
