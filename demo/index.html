@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PassSeeds Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #cdcdcd 20%, #1a6839 100%);
+      min-height: 100vh;
+      padding: 2rem;
+      color: #333;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      color: white;
+      margin-bottom: 3rem;
+    }
+
+    header .logo {
+      width: min(360px, 80vw);
+      height: auto;
+      display: block;
+      margin: 0 auto 0.75rem;
+    }
+
+    header .subtitle {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-top: 0.5rem;
+      color: #000;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #1a6839;
+      border-bottom: 2px solid #1a6839;
+      padding-bottom: 0.5rem;
+    }
+
+    .method {
+      margin-bottom: 1.5rem;
+    }
+
+    .method p {
+      margin-bottom: 1rem;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    button {
+      background: #1a6839;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-right: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    button:hover {
+      background: #1a6839;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(26, 104, 57, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .form-fields {
+      display: grid;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .form-field label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #1a6839;
+    }
+
+    .form-field input {
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 0.6rem 0.75rem;
+      font-size: 1rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-field input:focus {
+      outline: none;
+      border-color: #1a6839;
+      box-shadow: 0 0 0 3px rgba(26, 104, 57, 0.15);
+    }
+
+    .output {
+      background: #f5f5f5;
+      border-left: 4px solid #1a6839;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-top: 1rem;
+      font-family: "Monaco", "Courier New", monospace;
+      font-size: 0.9rem;
+      max-height: 300px;
+      overflow-y: auto;
+      word-break: break-all;
+    }
+
+    .output.error {
+      border-left-color: #f56565;
+      background: #fff5f5;
+      color: #f56565;
+    }
+
+    .output.success {
+      border-left-color: #48bb78;
+      background: #f0fff4;
+      color: #22543d;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .status.loading {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .warning {
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 4px;
+      margin: 1rem 0;
+      color: #92400e;
+    }
+
+    .info {
+      background: #dbeafe;
+      border-left: 4px solid #1a6839;
+      padding: 1rem;
+      border-radius: 4px;
+      margin: 1rem 0;
+      color: #1e40af;
+    }
+
+    code {
+      background: #f0f0f0;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-family: "Monaco", "Courier New", monospace;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .feature-list li {
+      padding: 0.5rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+
+    .feature-list li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #48bb78;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      color: white;
+      margin-top: 3rem;
+      opacity: 0.8;
+    }
+
+    .mnemonic-display {
+      background: #f0f0f0;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .word {
+      background: white;
+      padding: 0.5rem;
+      border-radius: 4px;
+      text-align: center;
+      border: 1px solid #ddd;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img class="logo" src="./demo/logo.svg" alt="PassSeeds">
+      <div class="subtitle">Passkey-based cryptographic seed derivation</div>
+    </header>
+
+    <div class="card">
+      <h2>About PassSeeds</h2>
+      <p>
+        PassSeeds is a technical experiment that leverages WebAuthn passkeys as the derivation source for cryptographic seed material.
+        PassSeeds hijacks Passkey technology to provide a phishing-resistant, biometrically-secured way to derive cryptographic keys beyond those supported by Passkeys natively.
+        With PassSeeds, you can create a regenerable, cross-deviced synced cryptographic seed that can be used to derive cryptographic keys of any type, such as Bitcoin secp256k1 keys for use as a petty cash Web wallet, BLS 12-381 keys for zero-knowledge proof interactions, and much more.
+      </p>
+      <br/>
+      <ul class="feature-list">
+        <li>Create passkeys and derive cryptographic seed material from them</li>
+        <li>PassSeeds are automatically synced across all your devices</li>
+        <li>Export your PassSeed as a 12 or 24 word BIP39 mnemonic phrase</li>
+        <li>Regenerate your PassSeed from an existing passkey on any device</li>
+        <li>Use your PassSeed across apps without exporting the private key</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>PassSeed.create()</h2>
+      <div class="method">
+        <p>
+          Creates a new P-256 passkey through the WebAuthn API and derives a deterministic 32-byte seed string.
+          The method extracts the public key from attestation data and hashes it with SHA-256.
+        </p>
+        <div class="info">
+          ℹ️ You'll be prompted to create a new passkey using your platform's authenticator (Face ID, Touch ID, Windows Hello, etc.)
+        </div>
+      </div>
+      <div class="form-fields">
+        <div class="form-field">
+          <label for="createUser">Username (whose seed is this?)</label>
+          <input
+            id="createUser"
+            type="text"
+            placeholder="Alice B. Carol"
+            autocomplete="username"
+          />
+        </div>
+        <div class="form-field">
+          <label for="createSeedName">Seed Name (nickname for this seed)</label>
+          <input
+            id="createSeedName"
+            type="text"
+            placeholder="My PassSeed"
+            autocomplete="off"
+          />
+        </div>
+      </div>
+      <div class="button-group">
+        <button id="createBtn" onclick="handleCreate()">Create PassSeed</button>
+      </div>
+      <div id="createStatus"></div>
+      <div id="createOutput"></div>
+    </div>
+
+    <div class="card">
+      <h2>PassSeed.get()</h2>
+      <div class="method">
+        <p>
+          Retrieves an existing passkey and performs dual WebAuthn signatures to recover the public key.
+          The recovered public key is then hashed to derive a deterministic seed string.
+        </p>
+        <div class="warning">
+          ⚠️ This requires that you've already created a passkey using the <code>PassSeed.create()</code> method above.
+          You'll be prompted to authenticate with it twice to perform the signature-based recovery.
+        </div>
+      </div>
+      <div class="button-group">
+        <button id="getBtn" onclick="handleGet()">Retrieve PassSeed</button>
+      </div>
+      <div id="getStatus"></div>
+      <div id="getOutput"></div>
+    </div>
+
+      <div class="card">
+      <h2>PassSeed.toMnemonic()</h2>
+      <div class="method">
+        <p>
+          Converts PassSeed bytes or a seed string into a human-readable 12- or 24-word BIP39 mnemonic phrase.
+          This makes it easy to backup and share the seed material.
+        </p>
+        <div class="info">
+          ℹ️ Try creating a PassSeed first, then convert it to a mnemonic phrase.
+        </div>
+      </div>
+      <div class="button-group">
+        <button id="mnemonicBtn" onclick="handleToMnemonic()" disabled>Convert to Mnemonic</button>
+      </div>
+      <div id="mnemonicStatus"></div>
+      <div id="mnemonicOutput"></div>
+    </div>
+
+    <footer>
+      <p>PassSeeds - A technical experiment in WebAuthn-based key management</p>
+      <p style="font-size: 0.9rem; margin-top: 1rem;">
+        Learn more: <a href="https://github.com/csuwildcat/passseeds" style="color: white;">github.com/csuwildcat/passseeds</a>
+      </p>
+    </footer>
+  </div>
+
+  <script type="module">
+    // Import the bundled browser build
+    import PassSeed from '/dist/index.js';
+
+    // Store the current PassSeed seed string for conversion
+    let currentPassSeed = null;
+
+    // Helper to display output
+    function displayOutput(elementId, content, isError = false) {
+      const element = document.getElementById(elementId);
+      if (typeof content === 'object') {
+        content = JSON.stringify(content, null, 2);
+      }
+      element.className = `output ${isError ? 'error' : 'success'}`;
+      element.textContent = content;
+    }
+
+    function displayStatus(elementId, message, type = 'loading') {
+      const element = document.getElementById(elementId);
+      element.innerHTML = `<span class="status ${type}">${message}</span>`;
+    }
+
+    // Make functions available globally
+    window.handleCreate = async function() {
+      const btn = document.getElementById('createBtn');
+      btn.disabled = true;
+      const statusEl = document.getElementById('createStatus');
+      const userInput = document.getElementById('createUser');
+      const seedNameInput = document.getElementById('createSeedName');
+      
+      try {
+        displayStatus('createStatus', '⏳ Creating passkey...', 'loading');
+        
+        const user = userInput?.value.trim();
+        const seedName = seedNameInput?.value.trim();
+        const options = {};
+        if (user) {
+          options.user = user;
+        }
+        if (seedName) {
+          options.seedName = seedName;
+        }
+
+        const seedString = await PassSeed.create(options);
+        currentPassSeed = seedString;
+        
+        displayOutput('createOutput', `PassSeed (hex): ${seedString}`);
+        displayStatus('createStatus', '✓ PassSeed created successfully', 'success');
+        
+        // Enable mnemonic button
+        document.getElementById('mnemonicBtn').disabled = false;
+      } catch (error) {
+        displayOutput('createOutput', `Error: ${error.message}`, true);
+        displayStatus('createStatus', '✗ Failed to create PassSeed', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    window.handleToMnemonic = async function() {
+      if (!currentPassSeed) {
+        displayOutput('mnemonicOutput', 'Error: Create a PassSeed first', true);
+        return;
+      }
+
+      const btn = document.getElementById('mnemonicBtn');
+      btn.disabled = true;
+
+      try {
+        displayStatus('mnemonicStatus', '⏳ Generating mnemonic...', 'loading');
+        
+        const mnemonic = await PassSeed.toMnemonic(currentPassSeed);
+        const words = mnemonic.split(' ');
+        
+        let html = `<div class="mnemonic-display">`;
+        words.forEach((word, index) => {
+          html += `<div class="word">${index + 1}. ${word}</div>`;
+        });
+        html += `</div>`;
+        html += `<p><strong>Full mnemonic:</strong></p><div class="output success">${mnemonic}</div>`;
+        
+        document.getElementById('mnemonicOutput').innerHTML = html;
+        displayStatus('mnemonicStatus', '✓ Mnemonic generated successfully', 'success');
+      } catch (error) {
+        displayOutput('mnemonicOutput', `Error: ${error.message}`, true);
+        displayStatus('mnemonicStatus', '✗ Failed to generate mnemonic', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    window.handleGet = async function() {
+      const btn = document.getElementById('getBtn');
+      btn.disabled = true;
+
+      try {
+        displayStatus('getStatus', '⏳ Retrieving and signing with passkey (1/2)...', 'loading');
+        
+        const seedString = await PassSeed.get();
+        currentPassSeed = seedString;
+        
+        displayOutput('getOutput', `PassSeed (hex): ${seedString}`);
+        displayStatus('getStatus', '✓ PassSeed retrieved successfully', 'success');
+        
+        // Enable mnemonic button
+        document.getElementById('mnemonicBtn').disabled = false;
+      } catch (error) {
+        displayOutput('getOutput', `Error: ${error.message}`, true);
+        displayStatus('getStatus', '✗ Failed to retrieve PassSeed', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+  </script>
+</body>
+</html>

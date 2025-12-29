@@ -1,0 +1,34 @@
+# Security Policy
+
+## Reporting Security Issues
+
+If you discover a security vulnerability, please email security@passseeds.dev instead of using the issue tracker.
+
+## Security Considerations
+
+PassSeeds is a technical experiment. While we strive to provide secure code, please consider the following:
+
+1. **Passkey Storage**: Your passkeys are stored in your device's secure hardware (Secure Enclave on iOS/Mac, Titan on Android/Google, TPM on Windows). The security of your PassSeeds depends on this hardware being secure.
+
+2. **Origin Binding**: PassSeeds relies on WebAuthn's origin binding. Only websites served over HTTPS can use PassSeeds.
+
+3. **Derived Keys**: PassSeeds themselves are never exported by the browser. However, keys derived from PassSeeds must be handled securely by your application.
+
+4. **No Backup Recovery**: If you lose your passkey or device, you cannot recover the PassSeed without having previously saved the mnemonic.
+
+5. **Attestation**: While PassSeeds can request attestation, this is optional and not verified by default.
+
+## Best Practices
+
+- Always use HTTPS for PassSeeds applications
+- Keep your device OS and browser up to date
+- Enable biometric or PIN protection on your device
+- If you export a mnemonic, store it securely (e.g., in a safe, encrypted password manager)
+- Don't share PassSeeds or derived keys across untrusted applications
+- Test thoroughly before using with real cryptographic operations
+
+## Threat Model Limitations
+
+- This does not protect against keyloggers or screen capture malware on your device
+- This does not protect against a malicious website using social engineering
+- This does not protect against physical device theft (before biometric/PIN authentication)

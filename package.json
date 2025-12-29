@@ -1,0 +1,53 @@
+{
+  "name": "passseeds",
+  "version": "0.1.0",
+  "description": "PassSeeds - Passkey-gated cryptographic seed derivation",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm run build:tsc && npm run build:browser",
+    "build:tsc": "tsc",
+    "build:browser": "esbuild src/index.ts --bundle --format=esm --platform=browser --target=es2020 --outfile=dist/index.js --inject:./scripts/buffer-shim.js",
+    "dev": "node scripts/dev.js",
+    "dev:demo": "node scripts/dev.js --demo",
+    "test": "node --test dist/tests/**/*.test.js",
+    "test:watch": "node --test --watch dist/tests/**/*.test.js",
+    "demo": "node scripts/serve-demo.js"
+  },
+  "keywords": [
+    "passkeys",
+    "webauthn",
+    "cryptography",
+    "seed",
+    "key-derivation",
+    "ecdsa"
+  ],
+  "author": "Daniel Buchner",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "buffer": "^6.0.3",
+    "esbuild": "^0.25.9",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@noble/curves": "^2.0.1",
+    "@noble/hashes": "^2.0.1",
+    "@scure/base": "^2.0.0",
+    "bip39": "^3.1.0",
+    "cbor-x": "^1.6.0"
+  }
+}
