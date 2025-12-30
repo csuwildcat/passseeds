@@ -39,6 +39,19 @@
       margin: 0 auto 0.75rem;
     }
 
+    .demo-badge {
+      display: inline-block;
+      background: #e76400;
+      color: white;
+      margin: 1rem 0 0;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      vertical-align: middle;
+    }
+
     header .subtitle {
       font-size: 1rem;
       opacity: 0.9;
@@ -266,6 +279,7 @@
     <header>
       <img class="logo" src="./logo.svg" alt="PassSeeds">
       <div class="subtitle">Passkey-based cryptographic seed derivation</div>
+      <div class="demo-badge">DEMO</div>
     </header>
 
     <div class="card">
@@ -349,6 +363,9 @@
           Converts PassSeed bytes or a seed string into a human-readable 12- or 24-word BIP39 mnemonic phrase.
           This makes it easy to backup and share the seed material.
         </p>
+        <div class="warning">
+          ⚠️ <strong>Demo Warning:</strong> This is a demonstration website. Do not use PassSeeds or mnemonic phrases generated here for sensitive applications. Only use this demo to understand the concept. For production use, implement PassSeeds in a secure, trusted environment.
+        </div>
         <div class="info">
           ℹ️ Try creating a PassSeed first, then convert it to a mnemonic phrase.
         </div>
