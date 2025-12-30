@@ -132,7 +132,15 @@ async function start() {
       return;
     }
 
-    const requestPath = url.pathname === '/' ? 'demo/index.html' : url.pathname.replace(/^\/+/, '');
+    // Serve demo assets at the site root while keeping dist under /dist.
+    let requestPath;
+    if (url.pathname === '/') {
+      requestPath = path.join('demo', 'index.html');
+    } else if (url.pathname.startsWith('/dist/')) {
+      requestPath = path.join('dist', url.pathname.replace(/^\/dist\/+/, ''));
+    } else {
+      requestPath = path.join('demo', url.pathname.replace(/^\/+/, ''));
+    }
     const filePath = path.resolve(ROOT_DIR, requestPath);
 
     // Security: prevent directory traversal

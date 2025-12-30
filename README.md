@@ -1,14 +1,13 @@
 # PassSeeds
 
-PassSeeds is a technical experiment that explores how WebAuthn passkeys can be hijacked to unlock broader cryptographic use cases. Instead of restricting passkeys to login scenarios, PassSeeds derives cryptographic seed material from passkeys in a way that keeps the anti-phishing, biometric UX that people understand.
+PassSeeds is a technical experiment that explores how WebAuthn passkeys can be hijacked to unlock broader cryptographic use cases. Instead of restricting passkeys to login scenarios, PassSeeds derives cryptographic seed material from passkeys in a way that lets apps generated a wide array of cryptographic keys (beyond the standard WebAuthn-supported curves), while retaining the strongly authenticaed biometric UX of passkeys.
 
 ## Features
 
 - **Passkey-gated seed creation**: Create passkeys and derive deterministic seed material
 - **Mnemonic export**: Convert seed bytes or seed strings into 12- or 24-word BIP39 mnemonic phrases for easy backup
-- **Dual-signature recovery**: Retrieve existing passkeys and recover seed material via ECDSA
-- **Zero key export**: The passkey's private key never leaves the authenticator
-- **Phishing-resistant**: Leverages WebAuthn's origin binding and user verification
+- **Cross-device access**: PassSeeds are synced across devices by the built-in passkey syncing mechanism.
+- **Elegant UX**: Leverages WebAuthn's origin-bound biometric/multi-factor UX
 
 ## Installation
 
@@ -108,7 +107,7 @@ Converts a hex string back to a Uint8Array.
 ### Seed Recovery
 
 1. When you need the seed material, call `PassSeed.get()`
-2. You'll be prompted to authenticate with your passkey twice
+2. You'll be prompted to authenticate with your passkey twice (for ECDSA public key recovery)
 3. The dual signatures are used to recover the public key and disambiguate the correct point
 4. The public key is hashed into a deterministic 32-byte seed string
 

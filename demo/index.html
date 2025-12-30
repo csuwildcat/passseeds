@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PassSeeds Demo</title>
+  <link rel="icon" type="image/svg+xml" href="./sapling-icon-green.svg">
+  <link rel="icon" type="image/png" href="./sapling-icon-green.png">
   <style>
     * {
       margin: 0;
@@ -262,7 +264,7 @@
 <body>
   <div class="container">
     <header>
-      <img class="logo" src="./demo/logo.svg" alt="PassSeeds">
+      <img class="logo" src="./logo.svg" alt="PassSeeds">
       <div class="subtitle">Passkey-based cryptographic seed derivation</div>
     </header>
 
@@ -368,7 +370,7 @@
 
   <script type="module">
     // Import the bundled browser build
-    import PassSeed from '/dist/index.js';
+    import PassSeed from './dist/index.js';
 
     // Store the current PassSeed seed string for conversion
     let currentPassSeed = null;
