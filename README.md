@@ -44,6 +44,15 @@ const seedString = await PassSeed.get();
 
 // Or target a specific credential
 const seedString = await PassSeed.get(credentialId);
+
+// Or pause between prompts to show custom UI
+const seedString = await PassSeed.get({
+  credentialId,
+  onBeforeSecondSignature: async () => {
+    showSecondPromptUI();
+    await waitForUserConfirmation();
+  }
+});
 ```
 
 ### Utility Functions
@@ -79,12 +88,14 @@ Converts PassSeed bytes or a seed string into a human-readable BIP39 mnemonic ph
 
 **Returns**: A 12- or 24-word BIP39 mnemonic phrase
 
-### `PassSeed.get(credentialId?: string): Promise<string>`
+### `PassSeed.get(credentialIdOrOptions?: string | { credentialId?: string; onBeforeSecondSignature?: () => void | Promise<void> }): Promise<string>`
 
 Retrieves an existing passkey and performs dual WebAuthn signatures to recover the P-256 public key. Requires that you've already created a passkey using `PassSeed.create()`.
 
 **Parameters**:
-- `credentialId` (optional) - Specific credential ID (base64url) to target
+- `credentialIdOrOptions` (optional) - Specific credential ID (base64url) or options
+- `credentialIdOrOptions.credentialId` (optional) - Specific credential ID (base64url) to target
+- `credentialIdOrOptions.onBeforeSecondSignature` (optional) - Async hook before the second signature request
 
 **Returns**: A 32-byte seed string derived from the passkey (hex)
 

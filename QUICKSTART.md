@@ -41,6 +41,14 @@ const recovered = await PassSeed.get();
 
 // Same PassSeed should produce the same result
 console.log(recovered === seedString); // true (if same passkey)
+
+// Optional: pause between signature prompts to show UI
+const recoveredWithUi = await PassSeed.get({
+  onBeforeSecondSignature: async () => {
+    showSecondPromptUI();
+    await waitForUserConfirmation();
+  }
+});
 ```
 
 ### Utilities

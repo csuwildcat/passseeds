@@ -12,6 +12,11 @@ const CURVE = p256.Point.CURVE();
 const Fp = Field(CURVE.p);
 const cborDecoder = new Decoder({ mapsAsObjects: false, useRecords: false });
 
+type PassSeedGetOptions = {
+  credentialId?: string;
+  onBeforeSecondSignature?: () => void | Promise<void>;
+};
+
 function seedStringFromPublicKeyBytes(publicKeyBytes: Uint8Array): string {
   const seedBytes = sha256(publicKeyBytes);
   return PassSeed.bytesToHex(seedBytes);
@@ -227,11 +232,17 @@ export class PassSeed {
    * performs two separate WebAuthn assertions over the same challenge, recovers the public key
    * from both signatures, and derives a deterministic 32-byte seed string by hashing the public key.
    * 
-   * @param credentialId - Optional specific credential ID (base64url) to target
+   * @param credentialIdOrOptions - Optional credential ID (base64url) or options
+   * @param credentialIdOrOptions.credentialId - Specific credential ID (base64url) to target
+   * @param credentialIdOrOptions.onBeforeSecondSignature - Optional callback before the second signature
    * @returns Promise<string> A 32-byte seed string derived from the passkey
    * @throws Error if authentication is cancelled or fails
    */
-  static async get(credentialId?: string): Promise<string> {
+  static async get(credentialIdOrOptions?: string | PassSeedGetOptions): Promise<string> {
+    const options = typeof credentialIdOrOptions === "string"
+      ? { credentialId: credentialIdOrOptions }
+      : credentialIdOrOptions ?? {};
+    const { credentialId, onBeforeSecondSignature } = options;
     // Step 1: Prepare a single challenge that both assertions will sign
     const challenge = crypto.getRandomValues(new Uint8Array(32));
     
@@ -267,6 +278,10 @@ export class PassSeed {
     const usedCredentialId = credentialId
       ? toArrayBuffer(base64urlnopad.decode(credentialId))
       : assertion1.rawId;
+
+    if (onBeforeSecondSignature) {
+      await onBeforeSecondSignature();
+    }
 
     // Step 3: Second signature over the same challenge
     assertionOptions.publicKey!.challenge = challenge;
