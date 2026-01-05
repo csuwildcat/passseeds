@@ -330,6 +330,61 @@
       font-family: monospace;
       font-size: 0.9rem;
     }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 2000;
+    }
+
+    .modal.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+    }
+
+    .modal-panel {
+      position: relative;
+      z-index: 1;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 2rem;
+      width: min(520px, 92vw);
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.35);
+      text-align: center;
+      transform: translateY(12px);
+      transition: transform 0.3s ease;
+    }
+
+    .modal.is-visible .modal-panel {
+      transform: translateY(0);
+    }
+
+    .modal-panel h3 {
+      margin-bottom: 0.75rem;
+      color: #1a6839;
+    }
+
+    .modal-panel p {
+      color: #475569;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .modal-panel button {
+      margin: 0;
+    }
   </style>
 </head>
 <body>
@@ -461,6 +516,22 @@
     </footer>
   </div>
 
+  <div id="secondSignatureModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div
+      class="modal-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="secondSignatureTitle"
+    >
+      <h3 id="secondSignatureTitle">Signature confirmation required</h3>
+      <p>
+        First signature capture was successful. You will now be asked for a confirmation signature to finish regeneration of your PassSeed.
+      </p>
+      <button id="secondSignatureContinue" type="button">Continue</button>
+    </div>
+  </div>
+
   <script type="module">
     // Import the bundled browser build
     import PassSeed from './dist/index.js';
@@ -481,6 +552,44 @@
     function displayStatus(elementId, message, type = 'loading') {
       const element = document.getElementById(elementId);
       element.innerHTML = `<span class="status ${type}">${message}</span>`;
+    }
+
+    function showSecondSignatureModal() {
+      const modal = document.getElementById('secondSignatureModal');
+      const continueBtn = document.getElementById('secondSignatureContinue');
+      const backdrop = modal?.querySelector('.modal-backdrop');
+
+      if (!modal || !continueBtn) {
+        return Promise.resolve();
+      }
+
+      modal.setAttribute('aria-hidden', 'false');
+      modal.classList.add('is-visible');
+
+      return new Promise((resolve) => {
+        const onKeydown = (event) => {
+          if (event.key === 'Escape') {
+            cleanup();
+          }
+        };
+
+        const cleanup = () => {
+          modal.classList.remove('is-visible');
+          modal.setAttribute('aria-hidden', 'true');
+          document.removeEventListener('keydown', onKeydown);
+          continueBtn.onclick = null;
+          if (backdrop) {
+            backdrop.onclick = null;
+          }
+          resolve();
+        };
+
+        continueBtn.onclick = cleanup;
+        if (backdrop) {
+          backdrop.onclick = cleanup;
+        }
+        document.addEventListener('keydown', onKeydown);
+      });
     }
 
     // Make functions available globally
@@ -559,7 +668,12 @@
       try {
         displayStatus('getStatus', '⏳ Retrieving and signing with passkey (1/2)...', 'loading');
         
-        const seedString = await PassSeed.get();
+        const seedString = await PassSeed.get({
+          onBeforeSecondSignature: async () => {
+            displayStatus('getStatus', '⏳ First signature complete. Ready for signature (2/2)...', 'loading');
+            await showSecondSignatureModal();
+          }
+        });
         currentPassSeed = seedString;
         
         displayOutput('getOutput', `PassSeed (hex): ${seedString}`);
