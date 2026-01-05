@@ -12,7 +12,8 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist/index.js",
+    "dist/index.d.ts"
   ],
   "scripts": {
     "build": "npm run build:tsc && npm run build:browser",
@@ -34,6 +35,14 @@
   ],
   "author": "Daniel Buchner",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csuwildcat/passseeds.git"
+  },
+  "homepage": "https://backalleycoder.com/passseeds/",
+  "bugs": {
+    "url": "https://github.com/csuwildcat/passseeds/issues"
+  },
   "engines": {
     "node": ">=20.19.0"
   },
