@@ -1,8 +1,3 @@
-# Security Policy
-
-## Reporting Security Issues
-
-If you discover a security vulnerability, please email security@passseeds.dev instead of using the issue tracker.
 
 ## Security Considerations
 
