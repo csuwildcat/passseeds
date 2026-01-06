@@ -15,6 +15,12 @@ PassSeeds is a technical experiment that explores how WebAuthn passkeys can be h
 npm install passseeds
 ```
 
+## Documentation
+
+- [QUICKSTART.md](./QUICKSTART.md) - Usage + local development
+- [SECURITY.md](./SECURITY.md) - Security model
+- [CONTRIBUTING.md](./CONTRIBUTING.md) - How to contribute
+
 ## Usage
 
 ### Create a PassSeed
@@ -43,7 +49,7 @@ console.log(mnemonic); // 12-word phrase
 const seedString = await PassSeed.get();
 
 // Or target a specific credential
-const seedString = await PassSeed.get(credentialId);
+const seedString = await PassSeed.get({ credentialId });
 
 // Or pause between prompts to show custom UI
 const seedString = await PassSeed.get({
@@ -88,14 +94,14 @@ Converts PassSeed bytes or a seed string into a human-readable BIP39 mnemonic ph
 
 **Returns**: A 12- or 24-word BIP39 mnemonic phrase
 
-### `PassSeed.get(credentialIdOrOptions?: string | { credentialId?: string; onBeforeSecondSignature?: () => void | Promise<void> }): Promise<string>`
+### `PassSeed.get(options?: { credentialId?: string; onBeforeSecondSignature?: () => void | Promise<void> }): Promise<string>`
 
 Retrieves an existing passkey and performs dual WebAuthn signatures to recover the P-256 public key. Requires that you've already created a passkey using `PassSeed.create()`.
 
 **Parameters**:
-- `credentialIdOrOptions` (optional) - Specific credential ID (base64url) or options
-- `credentialIdOrOptions.credentialId` (optional) - Specific credential ID (base64url) to target
-- `credentialIdOrOptions.onBeforeSecondSignature` (optional) - Async hook before the second signature request
+- `options` (optional) - Passkey lookup options
+- `options.credentialId` (optional) - Specific credential ID (base64url) to target
+- `options.onBeforeSecondSignature` (optional) - Async hook before the second signature request
 
 **Returns**: A 32-byte seed string derived from the passkey (hex)
 
@@ -139,39 +145,47 @@ Converts a hex string back to a Uint8Array.
 
 ## Development
 
-### Build
+### Quick commands
 
 ```bash
+npm run build      # Compile TypeScript + browser bundle
+npm run dev        # Watch mode compilation
+npm run dev:demo   # Watch mode + live demo reload
+npm test           # Run tests
+npm run demo       # Start interactive demo
+```
+
+Build outputs to `dist/index.js` and `dist/index.d.ts`. The demo server runs at
+`http://localhost:8080` and reloads on changes.
+
+### Publishing (maintainers)
+
+```bash
+npm version patch  # or minor, major
 npm run build
+npm publish --access public
 ```
 
-This generates the bundled ESM build at `dist/index.js` and type declarations in `dist/index.d.ts`.
+The package ships from `dist/` via the `exports` map in `package.json`.
 
-### Test
+## Project Structure
 
-```bash
-npm test
 ```
-
-### Watch Mode
-
-```bash
-npm run dev
+passseeds/
+├── src/
+│   ├── index.ts           # Core PassSeed implementation
+│   └── tests/
+│       └── passseeds.test.ts
+├── dist/                  # Compiled output
+├── demo/
+│   └── index.html        # Interactive web demo
+├── scripts/
+│   ├── serve-demo.js     # Demo server with live reload
+│   └── dev.js            # Dev runner (tsc watch + optional demo)
+├── package.json
+├── tsconfig.json
+└── [documentation files]
 ```
-
-For watch mode + live demo reload:
-
-```bash
-npm run dev:demo
-```
-
-### Demo
-
-```bash
-npm run demo
-```
-
-This starts a live-reloading demo server and rebuilds the browser bundle on changes.
 
 ## Use Cases
 

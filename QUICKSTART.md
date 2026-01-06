@@ -1,14 +1,18 @@
 # Quick Start
 
+This guide covers both basic usage and local development setup for PassSeeds.
+If you only need the API, start with "Basic usage". If you are working on this
+repo, jump to "Development".
+
 ## Installation
 
 ```bash
 npm install passseeds
 ```
 
-## Basic Usage
+## Basic usage
 
-### Import the module
+### Import
 
 ```typescript
 import { PassSeed } from 'passseeds';
@@ -17,7 +21,6 @@ import { PassSeed } from 'passseeds';
 ### Create a new PassSeed
 
 ```typescript
-// Opens your device's biometric authenticator
 const seedString = await PassSeed.create({
   user: "Alice B. Carol",
   seedName: "My Seed"
@@ -28,21 +31,22 @@ console.log(seedString);
 ### Export as a mnemonic phrase
 
 ```typescript
-// Same 32-byte PassSeed always produces the same mnemonic
 const mnemonic = await PassSeed.toMnemonic(seedString, 12);
-console.log(mnemonic); // "word1 word2 word3 ... word12"
+console.log(mnemonic);
 ```
 
 ### Retrieve and recover a PassSeed
 
 ```typescript
-// Opens your authenticator and asks for 2 signatures
 const recovered = await PassSeed.get();
+console.log(recovered === seedString);
+```
 
-// Same PassSeed should produce the same result
-console.log(recovered === seedString); // true (if same passkey)
+```typescript
+const recoveredById = await PassSeed.get({ credentialId });
+```
 
-// Optional: pause between signature prompts to show UI
+```typescript
 const recoveredWithUi = await PassSeed.get({
   onBeforeSecondSignature: async () => {
     showSecondPromptUI();
@@ -54,26 +58,43 @@ const recoveredWithUi = await PassSeed.get({
 ### Utilities
 
 ```typescript
-// Convert between bytes and hex
 const bytes = new Uint8Array(32);
 const hex = PassSeed.bytesToHex(bytes);
 const restored = PassSeed.hexToBytes(hex);
 ```
 
-## Browser Demo
+## Browser demo (optional)
 
 ```bash
 npm install
 npm run demo
 ```
 
-This starts a local server and opens the interactive demo at `http://localhost:8080`
+This starts a local server at `http://localhost:8080` with the interactive demo.
 The demo uses the bundled browser build at `dist/index.js` and reloads on changes.
 
-## Development
+## Development (if working on this repo)
+
+### Prerequisites
+
+- Node.js 20.19+
+- npm or pnpm
+- A modern browser with WebAuthn support
+
+### Setup
 
 ```bash
-# Watch mode compilation
+cd /Users/daniel/repos/passseeds
+npm install
+```
+
+### Build, watch, and test
+
+```bash
+# One-time build
+npm run build
+
+# Watch mode
 npm run dev
 
 # Watch mode + live demo reload
@@ -81,30 +102,37 @@ npm run dev:demo
 
 # Run tests
 npm test
-
-# Build for production
-npm run build
 ```
 
-## Key Concepts
+Tests live in `src/tests/` and are compiled to `dist/tests/` during builds.
 
-### PassSeed
-A deterministic 32-byte value derived from your passkey. The same passkey always produces the same PassSeed.
+### Project structure
 
-### Mnemonic
-A 12- or 24-word human-readable representation of a PassSeed. You can write it down for backup.
+```
+passseeds/
+├── src/
+│   ├── index.ts           # Core PassSeed implementation
+│   └── tests/
+│       └── passseeds.test.ts
+├── dist/                  # Compiled output
+├── demo/
+│   └── index.html        # Interactive web demo
+├── scripts/
+│   ├── serve-demo.js     # Demo server with live reload
+│   └── dev.js            # Dev runner (tsc watch + optional demo)
+├── package.json
+├── tsconfig.json
+└── [documentation files]
+```
 
-### Dual-Signature Recovery
-By asking you to sign the same message twice, we can mathematically recover your passkey's public key without the private key ever leaving your device.
+## Troubleshooting
 
-### Key Derivation
-Once you have a PassSeed, you can derive other cryptographic keys for specific purposes:
-- Bitcoin signing (secp256k1)
-- ZKP credentials (BLS12-381)
-- Symmetric encryption (AES)
+- WebAuthn requires HTTPS in production; `localhost` is allowed for testing.
+- If the demo does not load, run `npm run demo` and check the browser console.
+- If builds fail, run `npm run build` to see compiler errors.
 
-## Next Steps
+## Next steps
 
 - Read the [full documentation](./README.md)
-- Check out the [security considerations](./SECURITY.md)
-- Explore [use cases](./README.md#use-cases)
+- Review [security considerations](./SECURITY.md)
+- See [contribution guidelines](./CONTRIBUTING.md)

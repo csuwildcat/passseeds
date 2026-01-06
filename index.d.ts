@@ -65,9 +65,9 @@ declare class PassSeed {
    * Browser only. Requires an existing passkey and user interaction.
    * 
    * @async
-   * @param credentialIdOrOptions - Optional credential ID (base64url) or options
-   * @param credentialIdOrOptions.credentialId - Specific credential ID (base64url) to target
-   * @param credentialIdOrOptions.onBeforeSecondSignature - Optional callback before the second signature
+   * @param options - Optional passkey lookup options
+   * @param options.credentialId - Specific credential ID (base64url) to target
+   * @param options.onBeforeSecondSignature - Optional callback before the second signature
    * @returns Promise that resolves to a 32-byte seed string (hex)
    * @throws Error if authentication is cancelled or fails
    * 
@@ -75,7 +75,7 @@ declare class PassSeed {
    * const seedString = await PassSeed.get();
    * // User will be prompted to authenticate twice
    */
-  static get(credentialIdOrOptions?: string | {
+  static get(options?: {
     credentialId?: string;
     onBeforeSecondSignature?: () => void | Promise<void>;
   }): Promise<string>;
